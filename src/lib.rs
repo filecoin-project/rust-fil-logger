@@ -22,7 +22,7 @@ mod single_file_writer;
 use std::env;
 use std::fs::File;
 
-use flexi_logger::{self, DeferredNow, FormatFunction, LogTarget, Record};
+use flexi_logger::{self, style, DeferredNow, FormatFunction, LogTarget, Record};
 use log::Level;
 pub use single_file_writer::SingleFileWriter;
 
@@ -65,29 +65,28 @@ pub fn go_log_json_format(
     )
 }
 
-/// Logs in the same console format as [IPFS go-log] does.
+/// Logs with color, contains the same information as the [pretty_env_logger].
 ///
 /// One log entry has this structure:
 ///
 /// ```text
-/// <timestamp>\t<log-level>\t<module-name>\t<source-file>:<line-number>\t<log-message>
+/// <timestamp> <log-level> <module-name> > <log-message>
 /// ```
 ///
-/// [IPFS go-log]: https://github.com/ipfs/go-log
-pub fn go_log_console_format(
+/// [pretty_env_logger]: https://crates.io/crates/pretty_env_logger
+fn color_logger_format(
     writer: &mut dyn std::io::Write,
     now: &mut DeferredNow,
     record: &Record,
 ) -> Result<(), std::io::Error> {
+    let level = record.level();
     write!(
         writer,
-        "{}\t{}\t{}\t{}:{}\t{}",
-        now.now().format("%Y-%m-%dT%H:%M:%S%.3f%:z"),
-        record.level(),
+        "{} {} {} > {}",
+        now.now().format("%Y-%m-%dT%H:%M:%S%.3f"),
+        style(level, level),
         record.module_path().unwrap_or("<unnamed>"),
-        record.file().unwrap_or("<unnamed>"),
-        record.line().unwrap_or(0),
-        &record.args()
+        record.args(),
     )
 }
 
@@ -142,6 +141,6 @@ pub fn init_with_file(file: File) {
 fn log_format() -> FormatFunction {
     match env::var("GOLOG_LOG_FMT") {
         Ok(ref format) if format == "json" => go_log_json_format,
-        _ => go_log_console_format,
+        _ => color_logger_format,
     }
 }
