@@ -1,6 +1,5 @@
-# A logging library used by Filecoin
-
-This crate is used to make sure that all Filecoin related crates log in the same format.
+/*!
+Using `fil_logger`.
 
 By default the `fil_logger` doesn't log anything. You can change this by setting the `RUST_LOG`
 environment variable to another level. This will show log output on stderr. Example:
@@ -26,10 +25,8 @@ $ GOLOG_LOG_FMT=json RUST_LOG=info cargo run --example simple
 {"level":"warn","ts":"2019-11-11T20:59:31.168+01:00","logger":"simple","caller":"examples/simple.rs:31","msg":"logging on warn level"}"
 {"level":"error","ts":"2019-11-11T20:59:31.168+01:00","logger":"simple","caller":"examples/simple.rs:32","msg":"logging on error level"}"
 ```
+*/
 
-## Example
-
-```rust
 use fil_logger;
 use log::{debug, error, info, trace, warn};
 
@@ -42,11 +39,3 @@ fn main() {
     warn!("logging on warn level");
     error!("logging on error level");
 }
-```
-
-## License
-
-The Filecoin Project is dual-licensed under Apache 2.0 and MIT terms:
-
-- Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
