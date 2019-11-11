@@ -22,6 +22,7 @@ mod single_file_writer;
 use std::env;
 use std::fs::File;
 
+use atty;
 use flexi_logger::{self, style, DeferredNow, FormatFunction, LogTarget, Record};
 use log::Level;
 pub use single_file_writer::SingleFileWriter;
@@ -74,7 +75,7 @@ pub fn go_log_json_format(
 /// ```
 ///
 /// [pretty_env_logger]: https://crates.io/crates/pretty_env_logger
-fn color_logger_format(
+pub fn color_logger_format(
     writer: &mut dyn std::io::Write,
     now: &mut DeferredNow,
     record: &Record,
@@ -85,6 +86,30 @@ fn color_logger_format(
         "{} {} {} > {}",
         now.now().format("%Y-%m-%dT%H:%M:%S%.3f"),
         style(level, level),
+        record.module_path().unwrap_or("<unnamed>"),
+        record.args(),
+    )
+}
+
+/// Logs without color, contains the same information as the [pretty_env_logger].
+///
+/// One log entry has this structure:
+///
+/// ```text
+/// <timestamp> <log-level> <module-name> > <log-message>
+/// ```
+///
+/// [pretty_env_logger]: https://crates.io/crates/pretty_env_logger
+pub fn nocolor_logger_format(
+    writer: &mut dyn std::io::Write,
+    now: &mut DeferredNow,
+    record: &Record,
+) -> Result<(), std::io::Error> {
+    write!(
+        writer,
+        "{} {} {} > {}",
+        now.now().format("%Y-%m-%dT%H:%M:%S%.3f"),
+        record.level(),
         record.module_path().unwrap_or("<unnamed>"),
         record.args(),
     )
@@ -141,6 +166,12 @@ pub fn init_with_file(file: File) {
 fn log_format() -> FormatFunction {
     match env::var("GOLOG_LOG_FMT") {
         Ok(ref format) if format == "json" => go_log_json_format,
-        _ => color_logger_format,
+        _ => {
+            if atty::is(atty::Stream::Stderr) {
+                color_logger_format
+            } else {
+                nocolor_logger_format
+            }
+        }
     }
 }
