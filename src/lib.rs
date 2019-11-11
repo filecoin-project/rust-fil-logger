@@ -16,6 +16,24 @@
 //! error!("error!");
 //! ```
 //!
+//! The default output looks like this (with log level debug):
+//!
+//! ```text
+//! 2019-11-11T21:04:25.685 DEBUG simple > debug information
+//! 2019-11-11T21:04:25.685 INFO simple > normal information
+//! 2019-11-11T21:04:25.685 WARN simple > a warning
+//! 2019-11-11T21:04:25.685 ERROR simple > error!
+//! ```
+//!
+//! It is also possible to log as JSON, which is more verbose and contains the filename and line
+//! number as additional information. To enable it, set the environment variable
+//! `GOLOG_LOG_FMT=json`:
+//!
+//! {"level":"debug","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:37",",sg":"debug information"}"
+//! {"level":"info","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:38","msg":"//! normal information"}"
+//! {"level":"warn","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:39","msg":"//! a warning"}"
+//! {"level":"error","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:40","msg":"error!"}"
+//!
 //! [env_logger]: https://crates.io/crates/env_logger
 mod single_file_writer;
 
