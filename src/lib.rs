@@ -29,10 +29,10 @@
 //! number as additional information. To enable it, set the environment variable
 //! `GOLOG_LOG_FMT=json`:
 //!
-//! {"level":"debug","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:37",",sg":"debug information"}
-//! {"level":"info","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:38","msg":"//! normal information"}
-//! {"level":"warn","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:39","msg":"//! a warning"}
-//! {"level":"error","ts":"2019-11-11T21:06:45.401+01:00","logger":"simple","caller":"examples/simple.rs:40","msg":"error!"}
+//! {"level":"debug","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:37",",sg":"debug information"}
+//! {"level":"info","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:38","msg":"//! normal information"}
+//! {"level":"warn","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:39","msg":"//! a warning"}
+//! {"level":"error","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:40","msg":"error!"}
 //!
 //! [env_logger]: https://crates.io/crates/env_logger
 mod single_file_writer;
@@ -76,7 +76,7 @@ pub fn go_log_json_format(
         writer,
         r#"{{"level":"{}","ts":"{}","logger":"{}","caller":"{}:{}","msg":"{}"}}"#,
         level,
-        now.now().format("%Y-%m-%dT%H:%M:%S%.3f%:z"),
+        now.now().format("%Y-%m-%dT%H:%M:%S%.3f%z"),
         record.module_path().unwrap_or("<unnamed>"),
         record.file().unwrap_or("<unnamed>"),
         record.line().unwrap_or(0),
