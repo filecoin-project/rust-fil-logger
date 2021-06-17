@@ -80,7 +80,7 @@ pub fn go_log_json_format(
         record.module_path().unwrap_or("<unnamed>"),
         record.file().unwrap_or("<unnamed>"),
         record.line().unwrap_or(0),
-        &record.args()
+        v_jsonescape::fallback::escape(&record.args().to_string())
     )
 }
 
