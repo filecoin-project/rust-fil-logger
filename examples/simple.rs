@@ -21,9 +21,10 @@ call:
 $ GOLOG_LOG_FMT=json RUST_LOG=info cargo run --example simple
     Finished dev [unoptimized + debuginfo] target(s) in 0.03s
      Running `target/debug/examples/simple`
-{"level":"info","ts":"2019-11-11T20:59:31.168+0100","logger":"simple","caller":"examples/simple.rs:30","msg":"logging on into level"}
-{"level":"warn","ts":"2019-11-11T20:59:31.168+0100","logger":"simple","caller":"examples/simple.rs:31","msg":"logging on warn level"}
-{"level":"error","ts":"2019-11-11T20:59:31.168+0100","logger":"simple","caller":"examples/simple.rs:32","msg":"logging on error level"}
+{"level":"info","ts":"2021-06-17T10:17:57.605+0200","logger":"simple","caller":"examples/simple.rs:38","msg":"logging on into level"}
+{"level":"warn","ts":"2021-06-17T10:17:57.605+0200","logger":"simple","caller":"examples/simple.rs:39","msg":"logging on warn level"}
+{"level":"error","ts":"2021-06-17T10:17:57.605+0200","logger":"simple","caller":"examples/simple.rs:40","msg":"logging on error level"}
+{"level":"info","ts":"2021-06-17T10:17:57.605+0200","logger":"simple","caller":"examples/simple.rs:42","msg":"logging string with json: {\"hello\": true}"}
 ```
 */
 
@@ -38,4 +39,6 @@ fn main() {
     info!("logging on into level");
     warn!("logging on warn level");
     error!("logging on error level");
+
+    info!(r#"logging string with json: {{"hello": true}}"#);
 }
