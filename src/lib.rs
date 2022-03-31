@@ -1,4 +1,3 @@
-#![deny(clippy::all, missing_docs)]
 //! The logging level can be changed by the `RUST_LOG` environment variable just like
 //! [`env_logger`].
 //!
@@ -35,13 +34,14 @@
 //! {"level":"error","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:40","msg":"error!"}
 //!
 //! [env_logger]: https://crates.io/crates/env_logger
+
+#![deny(clippy::all, missing_docs)]
+
 mod single_file_writer;
 
-use std::env;
-use std::fs::File;
+use std::{env, fs::File};
 
-use atty;
-use flexi_logger::{self, style, DeferredNow, FormatFunction, LogTarget, Record};
+use flexi_logger::{self, style, DeferredNow, FormatFunction, Record};
 use log::Level;
 pub use single_file_writer::SingleFileWriter;
 
@@ -76,13 +76,18 @@ pub fn go_log_json_format(
         writer,
         r#"{{"level":"{}","ts":"{}","logger":"{}","caller":"{}:{}","msg":{:?}}}"#,
         level,
-        now.now().format("%Y-%m-%dT%H:%M:%S%.3f%z"),
+        now.format(GO_TIME_FORMAT),
         record.module_path().unwrap_or("<unnamed>"),
         record.file().unwrap_or("<unnamed>"),
         record.line().unwrap_or(0),
         &record.args().to_string()
     )
 }
+
+const GO_TIME_FORMAT: &[time::format_description::FormatItem<'static>] =
+    time::macros::format_description!("%Y-%m-%dT%H:%M:%S%.3f%z");
+const DEFAULT_TIME_FORMAT: &[time::format_description::FormatItem<'static>] =
+    time::macros::format_description!("%Y-%m-%dT%H:%M:%S%.3f");
 
 /// Logs with color, contains the same information as the [pretty_env_logger].
 ///
@@ -102,8 +107,8 @@ pub fn color_logger_format(
     write!(
         writer,
         "{} {} {} > {}",
-        now.now().format("%Y-%m-%dT%H:%M:%S%.3f"),
-        style(level, level),
+        now.format(DEFAULT_TIME_FORMAT),
+        style(level).paint(level.to_string()),
         record.module_path().unwrap_or("<unnamed>"),
         record.args(),
     )
@@ -126,7 +131,7 @@ pub fn nocolor_logger_format(
     write!(
         writer,
         "{} {} {} > {}",
-        now.now().format("%Y-%m-%dT%H:%M:%S%.3f"),
+        now.format(DEFAULT_TIME_FORMAT),
         record.level(),
         record.module_path().unwrap_or("<unnamed>"),
         record.args(),
@@ -157,7 +162,8 @@ pub fn nocolor_logger_format(
 ///
 /// Panics if a global logger was already set.
 pub fn init() {
-    flexi_logger::Logger::with_env()
+    flexi_logger::Logger::try_with_env()
+        .expect("Invalid RUST_LOG")
         .format(log_format())
         .start()
         .expect("Initializing logger failed. Was another logger already initialized?");
@@ -173,8 +179,9 @@ pub fn init() {
 ///
 /// [`std::fs::File`]: https://doc.rust-lang.org/std/fs/struct.File.html
 pub fn init_with_file(file: File) {
-    flexi_logger::Logger::with_env()
-        .log_target(LogTarget::Writer(Box::new(SingleFileWriter::new(file))))
+    flexi_logger::Logger::try_with_env()
+        .expect("Invalid RUST_LOG")
+        .log_to_writer(Box::new(SingleFileWriter::new(file)))
         .format(log_format())
         .start()
         .expect("Initializing logger failed. Was another logger already initialized?");
