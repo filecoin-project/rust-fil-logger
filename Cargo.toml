@@ -1,7 +1,7 @@
 [package]
 name = "fil_logger"
 description = "A logging library used by Filecoin"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Volker Mische <volker.mische@gmail.com>"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
