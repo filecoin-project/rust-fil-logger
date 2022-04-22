@@ -84,10 +84,12 @@ pub fn go_log_json_format(
     )
 }
 
-const GO_TIME_FORMAT: &[time::format_description::FormatItem<'static>] =
-    time::macros::format_description!("%Y-%m-%dT%H:%M:%S%.3f%z");
-const DEFAULT_TIME_FORMAT: &[time::format_description::FormatItem<'static>] =
-    time::macros::format_description!("%Y-%m-%dT%H:%M:%S%.3f");
+const GO_TIME_FORMAT: &[time::format_description::FormatItem<'static>] = time::macros::format_description!(
+    "[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:3][offset_hour sign:mandatory][offset_minute]"
+);
+const DEFAULT_TIME_FORMAT: &[time::format_description::FormatItem<'static>] = time::macros::format_description!(
+    "[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:3]"
+);
 
 /// Logs with color, contains the same information as the [pretty_env_logger].
 ///
