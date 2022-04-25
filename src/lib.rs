@@ -33,7 +33,7 @@
 //! {"level":"warn","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:39","msg":"//! a warning"}
 //! {"level":"error","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:40","msg":"error!"}
 //!
-//! [env_logger]: https://crates.io/crates/env_logger
+//! [`env_logger`]: https://crates.io/crates/env_logger
 
 #![deny(clippy::all, missing_docs)]
 
@@ -162,7 +162,7 @@ pub fn nocolor_logger_format(
 ///
 /// # Panics
 ///
-/// Panics if a global logger was already set.
+/// Panics if a global logger was already set or the value of `RUST_LOG` is malformed.
 pub fn init() {
     flexi_logger::Logger::try_with_env()
         .expect("Invalid RUST_LOG")
@@ -171,13 +171,31 @@ pub fn init() {
         .expect("Initializing logger failed. Was another logger already initialized?");
 }
 
-/// initializes a new logger that logs to an already opened [`std::fs::File`].
+/// Maybe initializes a new logger. It logs to stderr.
 ///
-/// If the environment variable `GOLOG_LOG_FMT=json` is set, then the output is formatted as JSON.
+/// It will silently fail in case the logger cannot be initialized, e.g. due to some other logger
+/// already running. This is useful for using it in tests, where it is more important that the
+/// tests don't fail due to the logger, rather than having this specific logger initialized.
+///
+/// For more information about the log format, see [`init`].
 ///
 /// # Panics
 ///
-/// Panics if a global logger was already set.
+/// Panics if the value of `RUST_LOG` is malformed.
+pub fn maybe_init() {
+    let _ = flexi_logger::Logger::try_with_env()
+        .expect("Invalid RUST_LOG")
+        .format(log_format())
+        .start();
+}
+
+/// initializes a new logger that logs to an already opened [`std::fs::File`].
+///
+/// For more information about the log format, see [`init`].
+///
+/// # Panics
+///
+/// Panics if a global logger was already set or the value of `RUST_LOG` is malformed.
 ///
 /// [`std::fs::File`]: https://doc.rust-lang.org/std/fs/struct.File.html
 pub fn init_with_file(file: File) {
