@@ -76,7 +76,7 @@ pub fn go_log_json_format(
         writer,
         r#"{{"level":"{}","ts":"{}","logger":"{}","caller":"{}:{}","msg":{:?}}}"#,
         level,
-        now.format(GO_TIME_FORMAT),
+        now.now().format(GO_TIME_FORMAT),
         record.module_path().unwrap_or("<unnamed>"),
         record.file().unwrap_or("<unnamed>"),
         record.line().unwrap_or(0),
@@ -84,12 +84,8 @@ pub fn go_log_json_format(
     )
 }
 
-const GO_TIME_FORMAT: &[time::format_description::FormatItem<'static>] = time::macros::format_description!(
-    "[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:3][offset_hour sign:mandatory][offset_minute]"
-);
-const DEFAULT_TIME_FORMAT: &[time::format_description::FormatItem<'static>] = time::macros::format_description!(
-    "[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:3]"
-);
+const GO_TIME_FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3f%z";
+const DEFAULT_TIME_FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3f";
 
 /// Logs with color, contains the same information as the [pretty_env_logger].
 ///
@@ -109,7 +105,7 @@ pub fn color_logger_format(
     write!(
         writer,
         "{} {} {} > {}",
-        now.format(DEFAULT_TIME_FORMAT),
+        now.now().format(DEFAULT_TIME_FORMAT),
         style(level).paint(level.to_string()),
         record.module_path().unwrap_or("<unnamed>"),
         record.args(),
