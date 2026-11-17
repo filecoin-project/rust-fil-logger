@@ -1,6 +1,9 @@
 //! The logging level can be changed by the `RUST_LOG` environment variable just like
 //! [`env_logger`].
 //!
+//! Public formatters use `flexi_logger` 0.31's types, and [`SingleFileWriter`]
+//! implements its `LogWriter` trait.
+//!
 //! ## Example
 //!
 //! ```
@@ -39,7 +42,7 @@
 
 mod single_file_writer;
 
-use std::{env, fs::File};
+use std::{env, fs::File, io::IsTerminal};
 
 use flexi_logger::{self, style, DeferredNow, FormatFunction, Record};
 use log::Level;
@@ -80,7 +83,7 @@ pub fn go_log_json_format(
         record.module_path().unwrap_or("<unnamed>"),
         record.file().unwrap_or("<unnamed>"),
         record.line().unwrap_or(0),
-        &record.args().to_string()
+        record.args().to_string()
     )
 }
 
@@ -141,7 +144,7 @@ pub fn nocolor_logger_format(
 /// The default format is:
 ///
 /// ```text
-/// <timestamp>\t<log-level>\t<module-name>\t<source-file>:<line-number>\t<log-message>
+/// <timestamp> <log-level> <module-name> > <log-message>
 /// ```
 ///
 /// If the environment variable `GOLOG_LOG_FMT=json` is set, then the output is formatted as JSON:
@@ -208,7 +211,7 @@ fn log_format() -> FormatFunction {
     match env::var("GOLOG_LOG_FMT") {
         Ok(ref format) if format == "json" => go_log_json_format,
         _ => {
-            if atty::is(atty::Stream::Stderr) {
+            if std::io::stderr().is_terminal() {
                 color_logger_format
             } else {
                 nocolor_logger_format

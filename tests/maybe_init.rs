@@ -1,9 +1,11 @@
 #[test]
 fn maybe_init_always_possible() {
-    // Make sure that the logger is initialized.
+    std::env::set_var("RUST_LOG", "warn");
     fil_logger::init();
 
-    // Subsequent calls will fail silently.
     fil_logger::maybe_init();
     fil_logger::maybe_init();
+
+    assert!(log::log_enabled!(log::Level::Warn));
+    assert!(!log::log_enabled!(log::Level::Info));
 }
