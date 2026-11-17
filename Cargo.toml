@@ -9,6 +9,5 @@ repository = "https://github.com/filecoin-project/rust-fil-logger"
 readme = "README.md"
 
 [dependencies]
-flexi_logger = "0.24.0"
+flexi_logger = "0.31.10"
 log = "0.4.8"
-atty = "0.2.13"

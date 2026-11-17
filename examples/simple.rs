@@ -28,7 +28,6 @@ $ GOLOG_LOG_FMT=json RUST_LOG=info cargo run --example simple
 ```
 */
 
-use fil_logger;
 use log::{debug, error, info, trace, warn};
 
 fn main() {
