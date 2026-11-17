@@ -1,7 +1,7 @@
 //! The logging level can be changed by the `RUST_LOG` environment variable just like
 //! [`env_logger`].
 //!
-//! Public formatters use `flexi_logger` 0.31's types, and [`SingleFileWriter`]
+//! Public formatters use `flexi_logger`'s types, and [`SingleFileWriter`]
 //! implements its `LogWriter` trait.
 //!
 //! ## Example
