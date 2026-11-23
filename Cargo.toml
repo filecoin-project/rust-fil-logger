@@ -5,9 +5,10 @@ version = "0.2.0"
 authors = ["Volker Mische <volker.mische@gmail.com>"]
 license = "MIT OR Apache-2.0"
 edition = "2018"
+rust-version = "1.91"
 repository = "https://github.com/filecoin-project/rust-fil-logger"
 readme = "README.md"
 
 [dependencies]
-flexi_logger = "0.31.10"
+flexi_logger = "0.32.0"
 log = "0.4.8"
