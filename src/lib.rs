@@ -31,10 +31,12 @@
 //! number as additional information. To enable it, set the environment variable
 //! `GOLOG_LOG_FMT=json`:
 //!
-//! {"level":"debug","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:37",",sg":"debug information"}
-//! {"level":"info","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:38","msg":"//! normal information"}
-//! {"level":"warn","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:39","msg":"//! a warning"}
+//! ```text
+//! {"level":"debug","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:37","msg":"debug information"}
+//! {"level":"info","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:38","msg":"normal information"}
+//! {"level":"warn","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:39","msg":"a warning"}
 //! {"level":"error","ts":"2019-11-11T21:06:45.401+0100","logger":"simple","caller":"examples/simple.rs:40","msg":"error!"}
+//! ```
 //!
 //! [`env_logger`]: https://crates.io/crates/env_logger
 
@@ -79,7 +81,7 @@ pub fn go_log_json_format(
         writer,
         r#"{{"level":"{}","ts":"{}","logger":"{}","caller":"{}:{}","msg":{:?}}}"#,
         level,
-        now.now().format(GO_TIME_FORMAT),
+        now.format(GO_TIME_FORMAT),
         record.module_path().unwrap_or("<unnamed>"),
         record.file().unwrap_or("<unnamed>"),
         record.line().unwrap_or(0),
@@ -108,7 +110,7 @@ pub fn color_logger_format(
     write!(
         writer,
         "{} {} {} > {}",
-        now.now().format(DEFAULT_TIME_FORMAT),
+        now.format(DEFAULT_TIME_FORMAT),
         style(level).paint(level.to_string()),
         record.module_path().unwrap_or("<unnamed>"),
         record.args(),
